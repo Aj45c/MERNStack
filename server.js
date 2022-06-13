@@ -1,6 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
+const cors = require('cors')
 const app = express();
 
 require('dotenv').config();
@@ -32,7 +33,45 @@ app.use(express.json());
 
 //-------------------------------------------
 app.get('/' , (req, res) => {
-    res.send('YO');
+    res.send('YO welcome to my people app');
+})
+// Index-------------------------------------
+app.get('/people' , async (req, res) => {
+    try {
+    res.json(await People.find({}));
+    } catch (error) {
+        console.log('error: ', error)
+        res.json({error: 'something went wrong, go look at the console'})
+    }
+})
+//Create-------------------------------------
+app.post('/people', async (req, res) => {
+    try {
+        res.json(await People.create(req.body));
+    } catch (error){
+        console.log('error', error);
+        res.json({error: "something went wrong check console please"});
+    }
+})
+//Update-------------------------------------
+app.put('./people/:id', async (req, res) => {
+    try{
+        res.json(await People.findByIdAndUpdate(req.params.id, req.body))
+
+    }catch (error){
+        console.log('error: ', error)
+        res.json({error: 'somethings wrong check the console'})
+
+    }
+})
+//Delete-------------------------------------
+app.delete('./people/:id', async (req, res) => {
+    try{
+        res.json(await People.findByIdAndDelete(req.params.id));
+    }catch (error) {
+        console.log('error: ', error)
+        res.json({error: 'somethings wrong check the console'})
+    }
 })
 
 app.listen(PORT, () => {
